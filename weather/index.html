@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Weather app</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body>
+	<div class="weather-container">
+        <div class="weather-logo">
+          <img src="https://github.com/likhithabandaru2003/weather-app-nodejs/blob/main/weather.png" alt="Weather Logo"></img>i
+        </div>
+        <div class="weather-name">
+          Weather 
+        </div>
+      </div>
+
+	<form id="search-form">
+		<input type="search" 
+		placeholder="Enter city name" 
+		id="search-input" 
+		required 
+		autocomplete="off"
+		/>
+		<br>
+	
+	<button id="search-button">Search</button>
+	</form>
+
+	<main id="app-container">
+		<div id="location">
+			<p>--------</p>
+		</div>
+			<div id="temp">
+				<img id="temp-icon" src="https://raw.githubusercontent.com/likhithabandaru2003/weather-app/main/images/clouds.png" alt="">
+				<p><span id="temp-value">-------</span><span id="temp-unit">&#176;c</span></p>
+			</div>
+			<div id="climate">
+				<p>-------</p>
+			</div>
+			<div id="container">
+                <button id="humidity" >humidity</button>
+                <div id="result1"></div>
+                <br>
+                <button id="pressure"  >pressure</button>
+                <div id="result2"></div>
+                </div>   
+	</main>
+<script type="text/javascript" src="script.js">
+</script>
+</body>
+</html>
