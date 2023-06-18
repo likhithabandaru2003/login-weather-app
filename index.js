@@ -134,7 +134,7 @@ async function getWeather(city) {
       tempicon = "clouds.png";
     }
     const data = {
-      iconfile: `https://raw.githubusercontent.com/likhithabandaru2003login-weather-app/main/images/clouds.png/${tempicon}`,
+      iconfile: `https://raw.githubusercontent.com/likhithabandaru2003/login-weather-app/main/images/${tempicon}`,
       tempvalue: weatherData.main.feels_like,
       city: weatherData.name,
       id: weatherData.weather[0].id,
