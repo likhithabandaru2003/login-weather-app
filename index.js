@@ -77,7 +77,7 @@ async function getWeatherLatLon(lat, lon) {
     );
 
     const weatherData = await response.json();
-    console.log(weatherData);
+    
     let tempicon;
     let id = weatherData.weather[0].id;
     console.log("id", id);
