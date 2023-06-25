@@ -9,6 +9,28 @@ let result1 = document.getElementById("result1");
 let result2 = document.getElementById("result2");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
+document.addEventListener("DOMContentLoaded", () => {
+  const usernameElement = document.getElementById("username");
+
+  function fetchUsername(endpoint) {
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(data => {
+        if (usernameElement) {
+          usernameElement.textContent = data.username;
+        }
+      })
+      .catch(error => {
+        console.log('Error:', error);
+      });
+  }
+
+  fetchUsername('http://localhost:5000/signup');
+  fetchUsername('http://localhost:5000/login');
+  fetchUsername('http://localhost:5000/auth/protected');
+});
+ 
+
 
 searchButton.addEventListener("click", (e) => {
   e.preventDefault();

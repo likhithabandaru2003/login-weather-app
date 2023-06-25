@@ -51,7 +51,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.get(
-  "/auth/google",
+ "/auth/google",
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
@@ -67,7 +67,8 @@ app.get("/auth/google/failure", (req, res) => {
 });
 
 app.get("/auth/protected", isLoggedIn, (req, res) => {
-  res.sendFile(__dirname + "/weather/index.html");
+  const username = req.user.username;
+  res.sendFile(__dirname + "/weather/index.html",{ username: username });
 });
 
 app.get("/latlon", async (req, res) => {
@@ -175,6 +176,7 @@ app.post("/login", (req, res) => {
           if (err) throw err;
 
           if (isMatch) {
+            const loggedInUsername = results[0].username;
             res.sendFile(__dirname + "/weather/index.html");
           } else {
             res.send("Incorrect password");
@@ -198,8 +200,8 @@ app.post("/signup", (req, res) => {
       [username, hash],
       (error) => {
         if (error) throw error;
-
-        res.sendFile(__dirname + "/weather/index.html");
+        
+        res.sendFile(__dirname + "/weather/index.html",{ username: username });
       }
     );
   });
