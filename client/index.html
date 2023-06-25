@@ -8,11 +8,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container1">
+        <form id="login-form" action="http://localhost:5000/login" method="POST">
+          <h2>Login</h2>
+          <input type="text" placeholder="Username" name="username" required>
+          <input type="password" placeholder="Password" name="password" required>
+          <button type="submit">Login</button>
+          <p class="toggle-form">Don't have an account? <a href="#" id="signup-link">Sign up</a></p>
+        </form>
+        <form id="signup-form" action="http://localhost:5000/signup" method="POST">
+          <h2>Signup</h2>
+          <input type="text" placeholder="Username" name="username" required>
+          <input type="password" placeholder="Password" name="password" required>
+          <button type="submit">Signup</button>
+          <p class="toggle-form">Already have an account? <a href="#" id="login-link">Login</a></p>
+        </form>
+      </div>
+    
+    
     <div class="container">
-    <h1 class="center-heading" style="color:black;font-size:60px;font-family:cursive;">Weather  App</h1>
+
     <div class="center-button">
     <a href="http://localhost:5000/auth/google" class="google-signin-button"><span class="google-icon"></span> Sign in with Google</a>
     </div>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -4,6 +4,16 @@ const session =require('express-session');
 const path=require('path');
 const app=express();
 const mime = require('mime-types');
+const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
+const mysql = require('mysql');
+const pool = mysql.createPool({
+  host: "localhost",  
+  user: "admin",  
+  password: "admin",  
+  database: "login" 
+  });
+  
 require('./auth');
 
 app.use(express.json());
@@ -12,8 +22,8 @@ app.use(express.static(path.join(__dirname,"weather")));
 app.get('/auth/style.css', function(req, res) {
     const filePath = __dirname+'/weather/style.css'; 
   
-    
-      res.setHeader('Content-Type', 'text/css');
+
+    res.setHeader('Content-Type', 'text/css');
       res.sendFile(filePath);
     
   });
@@ -147,7 +157,52 @@ async function getWeather(city) {
     console.log(error);
   }
 }
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+  
+    pool.query(
+      'SELECT * FROM users WHERE username = ?',
+      [username],
+      (error, results) => {
+        if (error) throw error;
+  
+        if (results.length > 0) {
+          const storedPassword = results[0].password;
+          bcrypt.compare(password, storedPassword, (err, isMatch) => {
+            if (err) throw err;
+  
+            if (isMatch) {
+              res.sendFile(__dirname+"/weather/index.html")
+            } else {
+              res.send('Incorrect password');
+            }
+            console.log(results);
+          });
+        } else {
+          res.send('User not found');
+        }
+      }
+    );
+  });
+  app.post('/signup', (req, res) => {
+    const { username, password } = req.body;
+  
+    bcrypt.hash(password, 10, (err, hash) => {
+      if (err) throw err;
+  
+      pool.query(
+        'INSERT INTO users (username, password) VALUES (?, ?)',
+        [username, hash],
+        (error) => {
+          if (error) throw error;
+  
+          res.sendFile(__dirname+"/weather/index.html")
+        }
+      );
+    });
+  });
+ 
 
 
 app.listen(5000,()=>{
