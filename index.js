@@ -77,7 +77,9 @@ app.get("/auth/google/failure", (req, res) => {
 });
 
 app.get("/auth/protected", (req, res) => {
-  const username = req.user.username;
+  const username = req.user.displayName;
+  console.log(req.user.displayName);
+  res.cookie(`username`,username);
   res.sendFile(__dirname + "/weather/index.html",{ username: username });
 });
 
@@ -187,6 +189,7 @@ app.post("/login", (req, res) => {
 
           if (isMatch) {
             const loggedInUsername = results[0].username;
+            res.cookie(`LoggedInUsername`,loggedInUsername );
             res.sendFile(__dirname + "/weather/index.html");
           } else {
             res.send("Incorrect password");
@@ -201,7 +204,8 @@ app.post("/login", (req, res) => {
 });
 app.post("/signup", (req, res) => {
   const { username, password } = req.body;
-
+  console.log(username)
+  res.cookie(`SignupUsername`,username );
   if (password.length > 10) {
     res.send("Password exceeded 10 characters");
     return;
@@ -215,8 +219,9 @@ app.post("/signup", (req, res) => {
       [username, hash],
       (error) => {
         if (error) throw error;
-
-        res.sendFile(__dirname + "/weather/index.html", { username: username });
+        
+        
+        res.sendFile(__dirname + "/weather/index.html");
       }
     );
   });

@@ -9,72 +9,34 @@ let result1 = document.getElementById("result1");
 let result2 = document.getElementById("result2");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
-const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get('username');
-document.getElementById('username').innerHTML=username;
-function fetchUsername(endpoint) {
-  return fetch(endpoint)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status + ' ' + response.statusText);
-      }
-      console.log(response.json())
-      return  response.json();
-    })
-    .then(data => data.username)
-    .catch(error => {
-      console.log('Error:', error);
-      return null;
-    });
+
+document.getElementById('username').innerHTML=getCookie('username');
+function getCookie(cookieName) {
+  let cookie = {};
+  document.cookie.split(';').forEach(function(el) {
+    let [key,value] = el.split('=');
+    cookie[key.trim()] = value;
+  })
+  return cookie[cookieName];
 }
-
-
-fetchUsername('http://localhost:5000/login')
-  .then(username => {
-    if (username) {
-      
-      const fetchedUsername = username;
-
-     
-      const usernameElement = document.getElementById("username");
-      if (usernameElement) {
-        usernameElement.textContent = fetchedUsername;
-      }
-
-      console.log('Username:', fetchedUsername);
-    } else {
-      console.log('Failed to fetch username');
-    }
-  });
-  fetchUsername('http://localhost:5000/signup')
-  .then(username => {
-    if (username) {
-
-      const fetchedUsername = username;
-      const usernameElement = document.getElementById("username");
-      if (usernameElement) {
-        usernameElement.textContent = fetchedUsername;
-      }
-
-      console.log('Username:', fetchedUsername);
-    } else {
-      console.log('Failed to fetch username');
-    }
-  });
-  fetchUsername('http://localhost:5000/auth/protected')
-  .then(username => {
-    if (username) {
-      const fetchedUsername = username;
-      const usernameElement = document.getElementById("username");
-      if (usernameElement) {
-        usernameElement.textContent = fetchedUsername;
-      }
-
-      console.log('Username:', fetchedUsername);
-    } else {
-      console.log('Failed to fetch username');
-    }
-  });
+document.getElementById('username').innerHTML=getCookie('SignupUsername');
+function getCookie(cookieName) {
+  let cookie = {};
+  document.cookie.split(';').forEach(function(el) {
+    let [key,value] = el.split('=');
+    cookie[key.trim()] = value;
+  })
+  return cookie[cookieName];
+}
+document.getElementById('username').innerHTML=getCookie('LoggedInUsername');
+function getCookie(cookieName) {
+  let cookie = {};
+  document.cookie.split(';').forEach(function(el) {
+    let [key,value] = el.split('=');
+    cookie[key.trim()] = value;
+  })
+  return cookie[cookieName];
+}
  
 
 
