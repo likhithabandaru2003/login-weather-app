@@ -1,71 +1,73 @@
-const express = require('express');
-const passport = require('passport');
-const session =require('express-session');
-const path=require('path');
-const app=express();
-const mime = require('mime-types');
-const bodyParser = require('body-parser');
-const bcrypt = require('bcryptjs');
-const mysql = require('mysql');
+const express = require("express");
+const passport = require("passport");
+const session = require("express-session");
+const path = require("path");
+const app = express();
+const mime = require("mime-types");
+const bodyParser = require("body-parser");
+const bcrypt = require("bcryptjs");
+const mysql = require("mysql");
 const pool = mysql.createPool({
-  host: "localhost",  
-  user: "admin",  
-  password: "admin",  
-  database: "login" 
-  });
-  
-require('./auth');
+  host: "localhost",
+  user: "admin",
+  password: "admin",
+  database: "login",
+});
+
+require("./auth");
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname,"client")));
-app.use(express.static(path.join(__dirname,"weather")));
-app.get('/auth/style.css', function(req, res) {
-    const filePath = __dirname+'/weather/style.css'; 
-  
+app.use(express.static(path.join(__dirname, "client")));
+app.use(express.static(path.join(__dirname, "weather")));
+app.get("/auth/styles.css", function (req, res) {
+  const filePath = __dirname + "/weather/styles.css";
 
-    res.setHeader('Content-Type', 'text/css');
-      res.sendFile(filePath);
-    
-  });
-  app.get('/auth/script.js', function(req, res) {
-    const filePath = __dirname+'/weather/script.js'; 
-   
-      res.setHeader('Content-Type', 'text/javascript');
-      res.sendFile(filePath);
-    
-  });
-function isLoggedIn(req,res,next){
-    req.user ? next() : res.sendStatus(401);
+  res.setHeader("Content-Type", "text/css");
+  res.sendFile(filePath);
+
+});
+app.get("/auth/script.js", function (req, res) {
+  const filePath = __dirname + "/weather/script.js";
+
+  res.setHeader("Content-Type", "text/javascript");
+  res.sendFile(filePath);
+});
+function isLoggedIn(req, res, next) {
+  req.user ? next() : res.sendStatus(401);
 }
 
-app.get('/',(res,req)=>{
-    res.sendFile('./client/index.html')
+app.get("/", (res, req) => {
+  res.sendFile("./client/index.html");
 });
 
-app.use(session({
-    secret: 'mysecret',
+app.use(
+  session({
+    secret: "mysecret",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
-  }));
+    cookie: { secure: false },
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
-app.get('/auth/google',
-  passport.authenticate('google', { scope:
-      [ 'email', 'profile' ] }
-));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
 
-app.get( '/auth/google/callback',
-    passport.authenticate( 'google', {
-        successRedirect: '/auth/protected',
-        failureRedirect: '/auth/google/failure'
-}));
-app.get('/auth/google/failure',(req,res)=>{
-    res.send('Failed to Loggedin')
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/auth/protected",
+    failureRedirect: "/auth/google/failure",
+  })
+);
+app.get("/auth/google/failure", (req, res) => {
+  res.send("Failed to Loggedin");
 });
 
-app.get('/auth/protected',isLoggedIn,(req,res)=>{
-    res.sendFile(__dirname+"/weather/index.html")
+app.get("/auth/protected", isLoggedIn, (req, res) => {
+  res.sendFile(__dirname + "/weather/index.html");
 });
 
 app.get("/latlon", async (req, res) => {
@@ -87,7 +89,7 @@ async function getWeatherLatLon(lat, lon) {
     );
 
     const weatherData = await response.json();
-    
+
     let tempicon;
     let id = weatherData.weather[0].id;
     console.log("id", id);
@@ -107,8 +109,8 @@ async function getWeatherLatLon(lat, lon) {
     const data = {
       iconfile: `https://raw.githubusercontent.com/likhithabandaru2003/login-weather-app/main/images/${tempicon}`,
       tempvalue: weatherData.main.feels_like,
-      humidity:weatherData.main.humidity,
-      pressure:weatherData.main.pressure,
+      humidity: weatherData.main.humidity,
+      pressure: weatherData.main.pressure,
       city: weatherData.name,
       id: weatherData.weather[0].id,
       climate: weatherData.weather[0].description,
@@ -148,8 +150,8 @@ async function getWeather(city) {
       tempvalue: weatherData.main.feels_like,
       city: weatherData.name,
       id: weatherData.weather[0].id,
-      humidity:weatherData.main.humidity,
-      pressure:weatherData.main.pressure,
+      humidity: weatherData.main.humidity,
+      pressure: weatherData.main.pressure,
       climate: weatherData.weather[0].description,
     };
     return data;
@@ -158,53 +160,51 @@ async function getWeather(city) {
   }
 }
 app.use(bodyParser.urlencoded({ extended: false }));
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-  
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  pool.query(
+    "SELECT * FROM users WHERE username = ?",
+    [username],
+    (error, results) => {
+      if (error) throw error;
+
+      if (results.length > 0) {
+        const storedPassword = results[0].password;
+        bcrypt.compare(password, storedPassword, (err, isMatch) => {
+          if (err) throw err;
+
+          if (isMatch) {
+            res.sendFile(__dirname + "/weather/index.html");
+          } else {
+            res.send("Incorrect password");
+          }
+          console.log(results);
+        });
+      } else {
+        res.send("User not found");
+      }
+    }
+  );
+});
+app.post("/signup", (req, res) => {
+  const { username, password } = req.body;
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    if (err) throw err;
+
     pool.query(
-      'SELECT * FROM users WHERE username = ?',
-      [username],
-      (error, results) => {
+      "INSERT INTO users (username, password) VALUES (?, ?)",
+      [username, hash],
+      (error) => {
         if (error) throw error;
-  
-        if (results.length > 0) {
-          const storedPassword = results[0].password;
-          bcrypt.compare(password, storedPassword, (err, isMatch) => {
-            if (err) throw err;
-  
-            if (isMatch) {
-              res.sendFile(__dirname+"/weather/index.html")
-            } else {
-              res.send('Incorrect password');
-            }
-            console.log(results);
-          });
-        } else {
-          res.send('User not found');
-        }
+
+        res.sendFile(__dirname + "/weather/index.html");
       }
     );
   });
-  app.post('/signup', (req, res) => {
-    const { username, password } = req.body;
-  
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) throw err;
-  
-      pool.query(
-        'INSERT INTO users (username, password) VALUES (?, ?)',
-        [username, hash],
-        (error) => {
-          if (error) throw error;
-  
-          res.sendFile(__dirname+"/weather/index.html")
-        }
-      );
-    });
-  });
- 
+});
 
-
-app.listen(5000,()=>{
-    console.log('listening at port 5000');
+app.listen(5000, () => {
+  console.log("listening at port 5000");
 });
