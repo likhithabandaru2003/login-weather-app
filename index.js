@@ -7,6 +7,8 @@ const mime = require("mime-types");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const mysql = require("mysql");
+const cookieSession = require('cookie-session');
+require("./auth");
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
@@ -20,7 +22,7 @@ const pool = mysql.createPool({
   database: "login",
 });
 
-require("./auth");
+
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "client")));
@@ -46,14 +48,13 @@ app.get("/", (res, req) => {
   res.sendFile("./client/index.html");
 });
 
-app.use(
-  session({
-    secret: "mysecret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
+
+
+  
+app.use(cookieSession({
+    name: 'google-auth-session',
+    keys: ['key1', 'key2']
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.get(
@@ -66,13 +67,16 @@ app.get(
   passport.authenticate("google", {
     successRedirect: "/auth/protected",
     failureRedirect: "/auth/google/failure",
-  })
+
+  }),
+ 
+
 );
 app.get("/auth/google/failure", (req, res) => {
   res.send("Failed to Loggedin");
 });
 
-app.get("/auth/protected", isLoggedIn, (req, res) => {
+app.get("/auth/protected", (req, res) => {
   const username = req.user.username;
   res.sendFile(__dirname + "/weather/index.html",{ username: username });
 });

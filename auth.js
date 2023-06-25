@@ -8,7 +8,9 @@ passport.use(new GoogleStrategy({
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
+    console.log(profile)
     done(null,profile);
+    
   }
 ));
 passport.serializeUser((user,done)=>{

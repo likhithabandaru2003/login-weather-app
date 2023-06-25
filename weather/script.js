@@ -9,7 +9,9 @@ let result1 = document.getElementById("result1");
 let result2 = document.getElementById("result2");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
-
+const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get('username');
+document.getElementById('username').innerHTML=username;
 function fetchUsername(endpoint) {
   return fetch(endpoint)
     .then(response => {
