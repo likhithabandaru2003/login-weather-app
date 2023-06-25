@@ -9,26 +9,70 @@ let result1 = document.getElementById("result1");
 let result2 = document.getElementById("result2");
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
-document.addEventListener("DOMContentLoaded", () => {
-  const usernameElement = document.getElementById("username");
 
-  function fetchUsername(endpoint) {
-    fetch(endpoint)
-      .then(response => response.json())
-      .then(data => {
-        if (usernameElement) {
-          usernameElement.textContent = data.username;
-        }
-      })
-      .catch(error => {
-        console.log('Error:', error);
-      });
-  }
+function fetchUsername(endpoint) {
+  return fetch(endpoint)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.status + ' ' + response.statusText);
+      }
+      console.log(response.json())
+      return  response.json();
+    })
+    .then(data => data.username)
+    .catch(error => {
+      console.log('Error:', error);
+      return null;
+    });
+}
 
-  fetchUsername('http://localhost:5000/signup');
-  fetchUsername('http://localhost:5000/login');
-  fetchUsername('http://localhost:5000/auth/protected');
-});
+
+fetchUsername('http://localhost:5000/login')
+  .then(username => {
+    if (username) {
+      
+      const fetchedUsername = username;
+
+     
+      const usernameElement = document.getElementById("username");
+      if (usernameElement) {
+        usernameElement.textContent = fetchedUsername;
+      }
+
+      console.log('Username:', fetchedUsername);
+    } else {
+      console.log('Failed to fetch username');
+    }
+  });
+  fetchUsername('http://localhost:5000/signup')
+  .then(username => {
+    if (username) {
+
+      const fetchedUsername = username;
+      const usernameElement = document.getElementById("username");
+      if (usernameElement) {
+        usernameElement.textContent = fetchedUsername;
+      }
+
+      console.log('Username:', fetchedUsername);
+    } else {
+      console.log('Failed to fetch username');
+    }
+  });
+  fetchUsername('http://localhost:5000/auth/protected')
+  .then(username => {
+    if (username) {
+      const fetchedUsername = username;
+      const usernameElement = document.getElementById("username");
+      if (usernameElement) {
+        usernameElement.textContent = fetchedUsername;
+      }
+
+      console.log('Username:', fetchedUsername);
+    } else {
+      console.log('Failed to fetch username');
+    }
+  });
  
 
 

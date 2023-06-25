@@ -7,6 +7,12 @@ const mime = require("mime-types");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const mysql = require("mysql");
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 const pool = mysql.createPool({
   host: "localhost",
   user: "admin",
@@ -192,6 +198,11 @@ app.post("/login", (req, res) => {
 app.post("/signup", (req, res) => {
   const { username, password } = req.body;
 
+  if (password.length > 10) {
+    res.send("Password exceeded 10 characters");
+    return;
+  }
+
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) throw err;
 
@@ -200,8 +211,8 @@ app.post("/signup", (req, res) => {
       [username, hash],
       (error) => {
         if (error) throw error;
-        
-        res.sendFile(__dirname + "/weather/index.html",{ username: username });
+
+        res.sendFile(__dirname + "/weather/index.html", { username: username });
       }
     );
   });
