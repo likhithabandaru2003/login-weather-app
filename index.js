@@ -73,7 +73,9 @@ app.get(
 
 );
 app.get("/auth/google/failure", (req, res) => {
+  res.cookie(`username`,'');
   res.send("Failed to Loggedin");
+  
 });
 
 app.get("/auth/protected", (req, res) => {
@@ -189,14 +191,16 @@ app.post("/login", (req, res) => {
 
           if (isMatch) {
             const loggedInUsername = results[0].username;
-            res.cookie(`LoggedInUsername`,loggedInUsername );
+            res.cookie(`username`,loggedInUsername);
             res.sendFile(__dirname + "/weather/index.html");
           } else {
+            res.cookie(`username`,'');
             res.send("Incorrect password");
           }
           console.log(results);
         });
       } else {
+        res.cookie(`username`,'');
         res.send("User not found");
       }
     }
@@ -205,7 +209,7 @@ app.post("/login", (req, res) => {
 app.post("/signup", (req, res) => {
   const { username, password } = req.body;
   console.log(username)
-  res.cookie(`SignupUsername`,username );
+ 
   if (password.length > 10) {
     res.send("Password exceeded 10 characters");
     return;
@@ -220,7 +224,7 @@ app.post("/signup", (req, res) => {
       (error) => {
         if (error) throw error;
         
-        
+        res.cookie(`username`,username);
         res.sendFile(__dirname + "/weather/index.html");
       }
     );
