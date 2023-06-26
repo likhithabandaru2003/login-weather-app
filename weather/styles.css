@@ -169,8 +169,11 @@ input
   }
   .user-info {
     display: flex;
-    align-items: center;
+    align-items: center; 
     justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 
   .user-info img {
@@ -178,12 +181,14 @@ input
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    margin-top: 0; 
   }
 
   .user-info .username {
     font-weight: bold;
     font-family:cursive;
     color: white;
+    margin-right: 20px; 
   }
   .heading {
     text-align: center;

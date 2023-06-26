@@ -79,8 +79,8 @@ app.get("/auth/google/failure", (req, res) => {
 });
 
 app.get("/auth/protected", (req, res) => {
-  const username = req.user.displayName;
-  console.log(req.user.displayName);
+  const username = req.user. given_name;
+  console.log(req.user.given_name);
   res.cookie(`username`,username);
   res.sendFile(__dirname + "/weather/index.html",{ username: username });
 });
