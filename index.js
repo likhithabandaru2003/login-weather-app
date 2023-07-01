@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const mysql = require("mysql");
 const cookieSession = require('cookie-session');
+const nodemailer = require('nodemailer');
 require("./auth");
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -207,9 +208,9 @@ app.post("/login", (req, res) => {
   );
 });
 app.post("/signup", (req, res) => {
-  const { username, password } = req.body;
+  const { username, password,email,loc} = req.body;
   console.log(username)
- 
+  console.log(email)
   if (password.length > 10) {
     res.send("Password exceeded 10 characters");
     return;
@@ -219,8 +220,8 @@ app.post("/signup", (req, res) => {
     if (err) throw err;
 
     pool.query(
-      "INSERT INTO users (username, password) VALUES (?, ?)",
-      [username, hash],
+      "INSERT INTO users (username, password,email,loc) VALUES (?, ?,?,?)",
+      [username, hash, email, loc],
       (error) => {
         if (error) throw error;
         
@@ -229,6 +230,30 @@ app.post("/signup", (req, res) => {
       }
     );
   });
+  const transporter = nodemailer.createTransport({
+   
+    service: 'gmail',
+    auth: {
+      user: 'likhithabandaru200@gmail.com',
+      pass: 'vjksqquiliziergq',
+    },
+  });
+  
+  const mailOptions = {
+    from: 'likhithabandaru2002gmail.com',
+    to: email, 
+    subject: 'Welcome to the Weather App',
+    text: 'You have successfully signed up for the Weather App. Enjoy!',
+  };
+  
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+ 
 });
 
 app.listen(5000, () => {

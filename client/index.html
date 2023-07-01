@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1 style="font-family: cursive;font-size: 50px;text-align: center;margin-top:150pt">Weather App</h1>
+  <h1 style="font-family: cursive;font-size: 50px;text-align: center;margin-top:100pt;margin-bottom: 100px;">Weather App</h1>
     <div class="container1">
      
         <form id="login-form" action="http://localhost:5000/login" method="POST">
@@ -24,6 +24,8 @@
           <h2>Signup</h2>
           <input type="text" placeholder="Username" name="username" required>
           <input type="password" placeholder="Password" name="password" required>
+          <input type="email" placeholder="Email" name="email" required>
+          <input type="text" placeholder="Location" name="loc" required>
           <button type="submit">Signup</button>
           <p class="toggle-form">Already have an account? <a href="#" id="login-link">Login</a></p>
         </form>
