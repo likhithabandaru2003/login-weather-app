@@ -240,7 +240,7 @@ app.post("/signup", (req, res) => {
   });
   
   const mailOptions = {
-    from: 'likhithabandaru2002gmail.com',
+    from: 'likhithabandaru200@gmail.com',
     to: email, 
     subject: 'Welcome to the Weather App',
     text: 'You have successfully signed up for the Weather App. Enjoy!',
